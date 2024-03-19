@@ -118,33 +118,26 @@ def simular_consumo():
 
  # Define una función para verificar productos que están por debajo del umbral mínimo
 def verificar_alertas_reorden(): 
-    print("Productos en alerta de reorden:")  
+    print("Alertas de Reorden:")  
     # Define color rojo ANSI para resaltar el texto
-    color_rojo = "\033[91m"  
+    color_rojo = "\033[91m"
+    color_blanco = "\033[97m"  # Blanco ANSI
     # Define el color de texto predeterminado ANSI
     color_reset = "\033[0m"  
     
-    # Calcula la longitud máxima de cada columna para formatear la salida
-    max_len_producto = max(len(producto) for producto in inventario_modificado) + 10
-    max_len_detalle_1 = max(len(str(detalles[0])) for detalles in inventario_modificado.values()) + 10
-    max_len_detalle_2 = max(len(str(detalles[1])) for detalles in inventario_modificado.values()) + 10
-    
-    # Imprime el encabezado de la tabla
-    encabezado = f"{'| Producto'.ljust(max_len_producto)} | {'Cantidad'.ljust(max_len_detalle_1)} | {'Umbral'.ljust(max_len_detalle_2)}"
-    print(encabezado)
-    
-    # Agrega una línea horizontal debajo del encabezado
-    print("-" * (max_len_producto + max_len_detalle_1 + max_len_detalle_2 + 3))
-    
-    # Imprime los productos en alerta de reorden con colores
+    # Imprime las alertas de reorden con colores
     for producto, detalles in inventario_modificado.items():
         cantidad_actual = detalles[0]
         umbral_minimo = detalles[1]
         if cantidad_actual < umbral_minimo:
-            cantidad_coloreada = f"{color_rojo}{str(cantidad_actual)}{color_reset}"
-            print(f"{producto.ljust(max_len_producto)} | {cantidad_coloreada.ljust(max_len_detalle_1)} | {str(umbral_minimo).ljust(max_len_detalle_2)}")
+            cantidad_restante = umbral_minimo - cantidad_actual
+            producto_alerta = f"{color_rojo}ALERTA: {producto.upper()} ESTÁ PRÓXIMO A AGOTARSE, ESTÁ POR DEBAJO DEL UMBRAL MÍNIMO, SOLO QUEDAN {color_blanco}{cantidad_restante}{color_reset} {producto.upper()}"
+            print(producto_alerta)
     
-    pausar_para_continuar()  
+    pausar_para_continuar()
+
+
+ 
 
  # Define una función para reabastecer un producto específico en el inventario
 def reabastecer_producto(): 
