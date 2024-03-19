@@ -161,7 +161,7 @@ def programa_principal():
     # Inicia el bucle del menú
     while True:  
         try:
-            opcion_usuario = input("""  # Solicita al usuario seleccionar una opción del menú
+            opcion_usuario = input("""  
     Menú de gestión de inventario:
     1. Agregar Producto
     2. Simular consumo
