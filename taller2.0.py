@@ -214,7 +214,7 @@ Seleccione una opción: """)
         elif opcion_usuario == "7":  
             print("**********SALIENDO DEL PROGRAMA***********")  
             print("*********Realizado por:**************")
-            print("su nombre ")
+            print("su nombre  ")
             break  
         else:
             raise ValueError()  
