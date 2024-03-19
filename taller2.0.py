@@ -1,5 +1,13 @@
+
+
 import os  
 import random  
+
+# Define colores ANSI para resaltar el texto
+color_amarillo = "\033[93m"
+color_azul = "\033[94m"
+color_rojo = "\033[91m"
+color_reset = "\033[0m"
 
  # Inicializa un diccionario vacío para el inventario modificado
 inventario_modificado = {} 
@@ -7,7 +15,7 @@ inventario_modificado = {}
 # Define un diccionario con productos y sus cantidades y umbrales
 inventario = {  #
     'tornillos': [1000, 500],
-    'placas': [300, 200],
+    'placas': [1000, 200],
     'cables': [800, 300],
     'tuercas': [600, 400],
     'engranajes': [400, 200],
@@ -21,89 +29,65 @@ inventario = {  #
 inventario_modificado = dict(inventario) 
 
 # Define una función para agregar un nuevo producto al inventario
-def agregar_producto():  
+def agregar_producto():
+    limpiar_consola()  
     try:
         # Solicita al usuario el nombre del producto
-        llave_nueva = str(input("Ingrese el nombre del nuevo producto: ")).lower()  
-        
-        # Verifica si el producto ya existe en el inventario
-        if llave_nueva in inventario_modificado:
-            print("El producto ya existe en el inventario. Por favor, ingrese un nuevo producto.")
-            pausar_para_continuar()
-            return None
-        
+        llave_nueva = str(input("Ingrese el nombre del nuevo producto con máximo 20 caracteres alfanuméricos: "))  
         # Solicita al usuario la cantidad del nuevo producto
-        cantidad_nueva = int(input("Ingrese la cantidad: "))  
+        cantidad_nueva = int(input("Ingrese la cantidad con máximo 20 dígitos: "))  
         # Solicita al usuario el umbral mínimo del nuevo producto
-        umbral_nuevo = int(input("Ingrese el umbral mínimo: "))  
+        umbral_nuevo = int(input("Ingrese el umbral mínimo con máximo 20 dígitos: "))  
         
         # Verifica si los valores ingresados son válidos
-        if llave_nueva.isalnum() and cantidad_nueva > 0 and umbral_nuevo > 0: 
-            print("Datos Ingresados Exitosamente") 
-            pausar_para_continuar() 
-            # Retorna un diccionario con el nuevo producto y sus detalles
-            return {llave_nueva: [cantidad_nueva, umbral_nuevo]} 
+        if (all(caracter.isalnum() or caracter in ['-', '_', ',', '.'] for caracter in llave_nueva)) and cantidad_nueva > 0 and umbral_nuevo > 0:
+            if len(llave_nueva) > 20 or len(str(cantidad_nueva)) > 20 or len(str(umbral_nuevo)) > 20:
+                raise ValueError()
+            else:
+                print("Datos ingresados exitosamente") 
+                pausar_para_continuar()
+                # Retorna un diccionario con el nuevo producto y sus detalles
+                return {llave_nueva: [cantidad_nueva, umbral_nuevo]} 
         else:
-            raise ValueError()  
-    except (KeyError, TypeError, ValueError):
+            raise ValueError()
+    except (ValueError, TypeError):
         print("Uno o más valores ingresados no son coherentes")  
 
-
 # Define una función para mostrar un reporte del inventario
-def mostrar_reporte_de_inventario(inventario_modificado):  
+def mostrar_reporte_de_inventario(inventario_modificado_copy1):
+    limpiar_consola()  
     print("Reporte de Inventario")  
-    
-    # Define colores ANSI para resaltar el texto
-    color_rojo = "\033[91m"
-    color_amarillo = "\033[93m"
-    color_reset = "\033[0m"
-    
-    # Calcula la longitud máxima de cada columna para formatear la salida
-    max_len_producto = max(len(producto) for producto in inventario_modificado) + 10
-    max_len_detalle_1 = max(len(str(detalles[0])) for detalles in inventario_modificado.values()) + 10
-    max_len_detalle_2 = max(len(str(detalles[1])) for detalles in inventario_modificado.values()) + 10
-    
-    # Imprime el encabezado de la tabla con colores
-    encabezado = f"{'| Producto'.ljust(max_len_producto)} | {'Cantidad'.ljust(max_len_detalle_1)} | {'Umbral'.ljust(max_len_detalle_2)}"
     # Imprime el encabezado en amarillo
-    print(f"{color_amarillo}{encabezado}{color_reset}")  
+    print(f"{color_amarillo}| Producto \t\t| Cantidad \t\t| Umbral{color_reset}")  
     
     # Agrega una línea horizontal debajo del encabezado
-    print("-" * (max_len_producto + max_len_detalle_1 + max_len_detalle_2 + 3))
+    print("-"*60 )
     
     # Imprime los datos de inventario con colores según la cantidad
-    for producto, detalles in inventario_modificado.items():
+    for producto, detalles in inventario_modificado_copy1.items():
         cantidad = detalles[0]
         umbral = detalles[1]
         if cantidad <= umbral:
-            cantidad_coloreada = f"{color_rojo}{str(cantidad)}{color_reset}"
+            print(f"| {color_azul}{producto:21}{color_reset} | {color_rojo}{str(cantidad):21}{color_reset} | {color_reset}{str(umbral)}{color_reset}")
         elif cantidad <= umbral * 1.1:
-            cantidad_coloreada = f"{color_amarillo}{str(cantidad)}{color_reset}"
+            print(f"| {color_azul}{producto:21}{color_reset} | {color_amarillo}{str(cantidad):21}{color_reset} | {color_reset}{str(umbral)}{color_reset}")
         else:
-            cantidad_coloreada = str(cantidad)
-        
-        print(f"{producto.ljust(max_len_producto)} | {cantidad_coloreada.ljust(max_len_detalle_1)} | {str(umbral).ljust(max_len_detalle_2)}")
-    
+            print(f"| {color_azul}{producto:21}{color_reset} | {color_reset}{str(cantidad):21}{color_reset} | {color_reset}{str(umbral)}{color_reset}") 
     pausar_para_continuar()  
 
-# Define una función para limpiar la consola 
-def limpiar_consola():  
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-# Define una función para pausar el programa hasta que el usuario presione enter
-def pausar_para_continuar():  
-    input("Presione la tecla enter para continuar...")
-    limpiar_consola()  # Limpia la consola después de presionar enter
-
 # Define una función para calcular el inventario total
-def calcular_inventario_total():  
+def calcular_inventario_total(inventario_modificado_copy2):
+    limpiar_consola()  
     # Calcula el inventario total
-    inventario_total = sum(cantidad[0] for cantidad in inventario_modificado.values())  
-    print(f"Inventario Total: {inventario_total}")  
+    inventario_total = sum(cantidad[0] for cantidad in inventario_modificado_copy2.values())  
+    print(f"Inventario Total: {color_azul}{inventario_total}{color_reset}")  
     pausar_para_continuar()  
     
  # Define una función para simular el consumo de productos de forma aleatoria
-def simular_consumo(): 
+
+# Simular consumo
+def simular_consumo():
+    limpiar_consola() 
     for producto, detalles in inventario_modificado.items():
         cantidad_actual = detalles[0]
         if cantidad_actual > 0:
@@ -117,30 +101,36 @@ def simular_consumo():
     pausar_para_continuar()  # Pausa el programa para continuar
 
  # Define una función para verificar productos que están por debajo del umbral mínimo
-def verificar_alertas_reorden(): 
-    print("Alertas de Reorden:")  
+
+# Alertas de Reorden
+def verificar_alertas_reorden():
+    limpiar_consola() 
+    print("Productos en alerta de reorden:")  
     # Define color rojo ANSI para resaltar el texto
-    color_rojo = "\033[91m"
-    color_blanco = "\033[97m"  # Blanco ANSI
+    color_rojo = "\033[91m"  
     # Define el color de texto predeterminado ANSI
     color_reset = "\033[0m"  
     
-    # Imprime las alertas de reorden con colores
+    # Imprime el encabezado de la tabla
+    print(f"{color_amarillo}| Producto \t\t| Cantidad \t\t| Umbral{color_reset}")  
+    
+    # Agrega una línea horizontal debajo del encabezado
+    print("-"*60 )
+    
+    # Imprime los productos en alerta de reorden con colores
     for producto, detalles in inventario_modificado.items():
         cantidad_actual = detalles[0]
         umbral_minimo = detalles[1]
         if cantidad_actual < umbral_minimo:
-            cantidad_restante = umbral_minimo - cantidad_actual
-            producto_alerta = f"{color_rojo}ALERTA: {producto.upper()} ESTÁ PRÓXIMO A AGOTARSE, ESTÁ POR DEBAJO DEL UMBRAL MÍNIMO, SOLO QUEDAN {color_blanco}{cantidad_restante}{color_reset} {producto.upper()}"
-            print(producto_alerta)
+            print(f"| {color_azul}{producto:21}{color_reset} | {color_rojo}{str(cantidad_actual):21}{color_reset} | {color_reset}{str(umbral_minimo)}{color_reset}")
     
-    pausar_para_continuar()
-
-
- 
+    pausar_para_continuar()  
 
  # Define una función para reabastecer un producto específico en el inventario
-def reabastecer_producto(): 
+
+# Rebastecer Producto
+def reabastecer_producto():
+    limpiar_consola() 
     producto_reabastecer = input("Ingrese el nombre del producto que desea reabastecer: ")  
     producto_reabastecer = producto_reabastecer.lower()  
     # Verifica si el producto existe en el inventario
@@ -156,6 +146,15 @@ def reabastecer_producto():
     else:
         print("El producto ingresado no existe en el inventario.") 
     pausar_para_continuar()  
+
+# Define una función para limpiar la consola 
+def limpiar_consola():  
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# Define una función para pausar el programa hasta que el usuario presione enter
+def pausar_para_continuar():  
+    input("Presione la tecla enter para continuar...")
+    limpiar_consola()  # Limpia la consola después de presionar enter
 
 # Inicia el bucle del menú
 while True:  
@@ -194,7 +193,7 @@ Seleccione una opción: """)
             
         elif opcion_usuario == "4":  # 
             # Llama a la función para calcular el inventario total
-            calcular_inventario_total()  
+            calcular_inventario_total(inventario_modificado)  
             
         elif opcion_usuario == "5": 
             # Llama a la función para verificar alertas de reorden 
@@ -205,13 +204,13 @@ Seleccione una opción: """)
             reabastecer_producto()  
             
         elif opcion_usuario == "7":  
-            print("**********SALIENDO DEL PROGRAMA***********")  
+            print("**********SALIENDO DEL PROGRAMA***********")
             print("*********Realizado por:**************")
             print("Daniel Francisco Calderón Lebro")
-            print("Sebastian Orrego Urrea")
+            print("Sebastian Orrego Urrea")  
             break  
         else:
             raise ValueError()  
     except ValueError:
         print('Oops! Opción no válida. Intente de nuevo.')  
-        pausar_para_continuar()  
+        pausar_para_continuar()
