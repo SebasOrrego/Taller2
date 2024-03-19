@@ -215,6 +215,7 @@ Seleccione una opción: """)
             print("**********SALIENDO DEL PROGRAMA***********")  
             print("*********Realizado por:**************")
             print("Daniel Francisco Calderón Lebro")
+            print("Sebastian Orrego Urrea")
             break  
         else:
             raise ValueError()  
