@@ -156,61 +156,66 @@ def pausar_para_continuar():
     input("Presione la tecla enter para continuar...")
     limpiar_consola()  # Limpia la consola después de presionar enter
 
-# Inicia el bucle del menú
-while True:  
-    try:
-        opcion_usuario = input("""  # Solicita al usuario seleccionar una opción del menú
-Menú de gestión de inventario:
-1. Agregar Producto
-2. Simular consumo
-3. Mostrar reporte de inventario
-4. Calcular el inventario Total
-5. Verificar alertas de Reorden
-6. Rebastecer Producto
-7. Salir
-Seleccione una opción: """)
+
+def programa_principal():
+    # Inicia el bucle del menú
+    while True:  
+        try:
+            opcion_usuario = input("""  # Solicita al usuario seleccionar una opción del menú
+    Menú de gestión de inventario:
+    1. Agregar Producto
+    2. Simular consumo
+    3. Mostrar reporte de inventario
+    4. Calcular el inventario Total
+    5. Verificar alertas de Reorden
+    6. Rebastecer Producto
+    7. Salir
+    Seleccione una opción: """)
+            
+            
+            if opcion_usuario == "1":  
+                try:
+                    # Llama a la función para agregar un nuevo producto
+                    nuevo_producto = agregar_producto()  
+                    # Actualiza el inventario con el nuevo producto
+                    inventario_modificado.update(nuevo_producto) 
+                    # Maneja excepciones si ocurren errores al agregar el producto
+                except (KeyError, TypeError, ValueError):  
+                    print("Error al agregar el producto. No se realizaron cambios en el inventario.") 
+                    pausar_para_continuar()  
+                                    
+            elif opcion_usuario == "2":  
+                # Llama a la función para simular el consumo de productos
+                simular_consumo()  
         
-        
-        if opcion_usuario == "1":  
-            try:
-                # Llama a la función para agregar un nuevo producto
-                nuevo_producto = agregar_producto()  
-                 # Actualiza el inventario con el nuevo producto
-                inventario_modificado.update(nuevo_producto) 
-                # Maneja excepciones si ocurren errores al agregar el producto
-            except (KeyError, TypeError, ValueError):  
-                print("Error al agregar el producto. No se realizaron cambios en el inventario.") 
-                pausar_para_continuar()  
-                                
-        elif opcion_usuario == "2":  
-            # Llama a la función para simular el consumo de productos
-            simular_consumo()  
-       
-        # Ejecuta la opción para mostrar el reporte del inventario
-        elif opcion_usuario == "3":  
-            # Llama a la función para mostrar el reporte del inventario
-            mostrar_reporte_de_inventario(inventario_modificado)  
-            
-        elif opcion_usuario == "4":  # 
-            # Llama a la función para calcular el inventario total
-            calcular_inventario_total(inventario_modificado)  
-            
-        elif opcion_usuario == "5": 
-            # Llama a la función para verificar alertas de reorden 
-            verificar_alertas_reorden()  
-            
-        elif opcion_usuario == "6":  
-            # Llama a la función para reabastecer un producto
-            reabastecer_producto()  
-            
-        elif opcion_usuario == "7":  
-            print("**********SALIENDO DEL PROGRAMA***********")
-            print("*********Realizado por:**************")
-            print("Daniel Francisco Calderón Lebro")
-            print("Sebastian Orrego Urrea")  
-            break  
-        else:
-            raise ValueError()  
-    except ValueError:
-        print('Oops! Opción no válida. Intente de nuevo.')  
-        pausar_para_continuar()
+            # Ejecuta la opción para mostrar el reporte del inventario
+            elif opcion_usuario == "3":  
+                # Llama a la función para mostrar el reporte del inventario
+                mostrar_reporte_de_inventario(inventario_modificado)  
+                
+            elif opcion_usuario == "4":  # 
+                # Llama a la función para calcular el inventario total
+                calcular_inventario_total(inventario_modificado)  
+                
+            elif opcion_usuario == "5": 
+                # Llama a la función para verificar alertas de reorden 
+                verificar_alertas_reorden()  
+                
+            elif opcion_usuario == "6":  
+                # Llama a la función para reabastecer un producto
+                reabastecer_producto()  
+                
+            elif opcion_usuario == "7":  
+                print("**********SALIENDO DEL PROGRAMA***********")
+                print("*********Realizado por:**************")
+                print("Daniel Francisco Calderón Lebro")
+                print("Sebastian Orrego Urrea")  
+                break  
+            else:
+                raise ValueError()  
+        except ValueError:
+            print('Oops! Opción no válida. Intente de nuevo.')  
+            pausar_para_continuar()  
+
+if __name__ == '__main__':
+    programa_principal()
